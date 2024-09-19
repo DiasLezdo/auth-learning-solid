@@ -1,9 +1,11 @@
-import { Button, Typography } from "@suid/material";
+import { Box, Button, Card, Grid, Typography } from "@suid/material";
 import { Component } from "solid-js";
 import useAuthAppStore from "../../store/store";
 import { useNavigate } from "@solidjs/router";
 import apiClient from "../../services/backend";
 import toast from "solid-toast";
+import Details from "../../components/profile/Details";
+import Settings from "../../components/profile/Settings";
 
 const Profile: Component<{}> = (props) => {
   const userDetail = useAuthAppStore((s) => s.user); //optimize code
@@ -37,12 +39,27 @@ const Profile: Component<{}> = (props) => {
 
   return (
     <>
-      <Typography variant="h1" color="primary">
+      {/* <Typography variant="h1" color="primary">
         Profile : {userDetail?.first_name}
       </Typography>
       <Button variant="outlined" color="warning" onClick={handleLogout}>
         Logout
-      </Button>
+      </Button> */}
+      <Card
+        sx={{
+          padding: "1em",
+          margin: "1em 0",
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={8}>
+            <Details />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Settings handleLogout={handleLogout} />
+          </Grid>
+        </Grid>
+      </Card>
     </>
   );
 };

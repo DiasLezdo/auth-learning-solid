@@ -17,6 +17,7 @@ import { Theme, ThemeProvider } from "@suid/material";
 interface ThemeContextType {
   theme: () => Theme; // Signal to get the current theme
   changeTheme: (newTheme: "light" | "dark" | "red" | "blue" | "green") => void; // Function to change theme
+  themePaletteName: "light" | "dark" | "red" | "blue" | "green";
 }
 
 const ThemeProviderCxt = createContext<ThemeContextType>();
@@ -48,6 +49,21 @@ export const ThemeProviderContext: ParentComponent = (props) => {
   const [theme, setTheme] = createSignal<Theme>(themeName());
   type ThemeType = "light" | "dark" | "red" | "blue" | "green";
 
+  const getInitialTheme = (): ThemeType => {
+    const savedTheme = localStorage.getItem("theme");
+    return savedTheme === "light" ||
+      savedTheme === "dark" ||
+      savedTheme === "red" ||
+      savedTheme === "blue" ||
+      savedTheme === "green"
+      ? (savedTheme as ThemeType)
+      : "light";
+  };
+
+  const [themePaletteName, setThemePaletteName] = createSignal<ThemeType>(
+    getInitialTheme()
+  );
+
   const changeTheme = (newTheme: ThemeType) => {
     switch (newTheme) {
       case "light":
@@ -69,12 +85,13 @@ export const ThemeProviderContext: ParentComponent = (props) => {
         setTheme(lightTheme);
     }
     localStorage.setItem("theme", newTheme ?? "light");
-    };
-    
-    createEffect(()=>console.log('theme()', theme()))
+    setThemePaletteName(newTheme ?? "light");
+  };
 
   return (
-    <ThemeProviderCxt.Provider value={{ theme, changeTheme }}>
+    <ThemeProviderCxt.Provider
+      value={{ theme, changeTheme, themePaletteName: themePaletteName() }}
+    >
       <ThemeProvider theme={theme()}>{props.children}</ThemeProvider>
     </ThemeProviderCxt.Provider>
   );

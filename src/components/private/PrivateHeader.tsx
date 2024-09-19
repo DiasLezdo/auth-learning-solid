@@ -5,14 +5,17 @@ import { WiAlien } from "solid-icons/wi";
 import { deepOrange } from "@suid/material/colors";
 import ThemeSwitch from "../common/ThemeSwitch";
 
-
 const PrivateHeader: Component<{}> = (props) => {
   const theme = useTheme();
 
-  
-
   const location = useLocation();
   const pathname = createMemo(() => location.pathname);
+
+  const mode = theme.palette.mode;
+
+  createEffect(() => {
+    document.body.className = mode === "dark" ? "dark" : "light";
+  });
 
   return (
     <Box
@@ -27,7 +30,7 @@ const PrivateHeader: Component<{}> = (props) => {
       <WiAlien size={70} color="#8B9464" />
       <Box>
         <Stack direction="row" spacing={2} alignItems="center">
-          <ThemeSwitch />
+          <ThemeSwitch mode={mode} />
           <A
             href="/user/home"
             style={{

@@ -12,12 +12,23 @@ code {
     monospace;
 } */
 
+:root {
+  --body--color--dark: #141414;
+  --body--color--light: #fafafa;
+}
 
+body.dark {
+  background-color: var(--body--color--dark);
+}
 
-.active{
+body.light {
+  background-color: var(--body--color--light);
+}
+
+.active {
   /* background-color: #e1aef5; */
   color: rgb(228, 47, 47) !important;
   /* border-radius: 5px; */
   /* padding: 2px 5px; */
-   transition: color .3s ease-in-out;
+  transition: color 0.3s ease-in-out;
 }

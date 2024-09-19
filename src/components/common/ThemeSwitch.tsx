@@ -2,6 +2,10 @@ import { styled, Switch } from "@suid/material";
 import { Component } from "solid-js";
 import { useContextTheme } from "../../context/Theme";
 
+interface Props {
+  mode: string;
+}
+
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 62,
   height: 34,
@@ -50,12 +54,13 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const ThemeSwitch: Component<{}> = (props) => {
+const ThemeSwitch = (props: Props) => {
   const { changeTheme } = useContextTheme();
   return (
     <>
       <MaterialUISwitch
         sx={{ m: 1 }}
+        defaultChecked={props.mode === "dark"}
         onChange={(e) => changeTheme(e.target.checked ? "dark" : "light")}
       />
     </>
