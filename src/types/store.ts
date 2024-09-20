@@ -15,6 +15,7 @@ export type User = {
   bio: string;
   account_type: string;
   verified: boolean;
+  mfa: number;
 };
 
 export interface userSlice {

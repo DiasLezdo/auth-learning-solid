@@ -61,7 +61,7 @@ apiClient.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       // Handle unauthorized errors, such as redirecting to login
       toast.error(error.response.data?.message || "Unauthorized");
-      window.location.href = "/login";
+      window.location.href = "/";
       localStorage.removeItem("user");
     } else if (error.response && error.response.status === 500) {
       // Handle server errors
@@ -69,6 +69,9 @@ apiClient.interceptors.response.use(
     } else if (error.response && error.response.status === 400) {
       // Handle bad request errors
       toast.error(error.response.data?.message || "Bad Request");
+    } else if (error.response && error.response.status === 404) {
+      // Handle bad request errors
+      toast.error(error.response.data?.message || "Not Found");
     } else {
       // Handle other status codes
       toast.error("An unknown error occurred");

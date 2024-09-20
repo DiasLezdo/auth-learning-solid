@@ -4,16 +4,21 @@ import {
   Card,
   CardActions,
   CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   Grid,
   IconButton,
   Input,
   InputAdornment,
   InputLabel,
+  Slide,
   TextField,
   Typography,
 } from "@suid/material";
-import { Component, createSignal, useContext } from "solid-js";
+import { Component, createSignal, JSXElement, useContext } from "solid-js";
 import { BiSolidLogInCircle } from "solid-icons/bi";
 import { Visibility, VisibilityOff } from "@suid/icons-material";
 import AuthBtn from "../../components/common/AuthBtn";
@@ -22,11 +27,46 @@ import useAuthAppStore from "../../store/store";
 import { useNavigate } from "@solidjs/router";
 import apiClient from "../../services/backend";
 import PrivacyTipRoundedIcon from "@suid/icons-material/PrivacyTipRounded";
+import { TransitionProps } from "@suid/material/transitions/transition";
+
+const Transition = function Transition(
+  props: TransitionProps & {
+    children: JSXElement;
+  }
+) {
+  return <Slide direction="up" {...props} />;
+};
 
 const Login: Component<{}> = (props) => {
   const [showPassword, setShowPassword] = createSignal(false);
+  const [loading, setLoading] = createSignal(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword());
   const handleMouseDownPassword = (event: Event) => event.preventDefault();
+
+  const [open, setOpen] = createSignal(false);
+  const [mfa, setMfa] = createSignal("");
+
+  const [authCode, setAuthCode] = createSignal<{
+    id: string;
+    mfa: number;
+  }>(
+    {} as {
+      id: string;
+      mfa: number;
+    }
+  );
+
+  const handleClickOpen = (val: { id: string; mfa: number }) => {
+    setAuthCode(val);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    toast("Need code", {
+      icon: <PrivacyTipRoundedIcon color="primary" />,
+      position: "top-right",
+    });
+  };
 
   const setUserToStore = useAuthAppStore((s) => s.addUser); //optimize code
 
@@ -78,10 +118,64 @@ const Login: Component<{}> = (props) => {
         setUserToStore(res.data?.user);
         toast.success(res?.data?.message);
         navigate(`/user/home`, { replace: true });
+      } else if (res.status == 202) {
+        toast(res?.data?.message, {
+          icon: <PrivacyTipRoundedIcon color="primary" />,
+          position: "top-right",
+        });
+        handleClickOpen(res.data.data);
       }
       // toast.success(value().email);
     } catch (error) {
       console.error("An error occurred:", error);
+    }
+  };
+
+  const handleVerify2f = async () => {
+    if (!authCode().id) {
+      return;
+    }
+    setLoading(true);
+    if (authCode().mfa == 1) {
+      try {
+        const res = await apiClient.post(`/verify/${authCode().id}`, {
+          otp: mfa(),
+        });
+        console.log("res", res);
+        if (res.status == 200) {
+          toast.success(res?.data?.message);
+          setUserToStore(res?.data?.user);
+          // localStorage.setItem("user", JSON.stringify(res?.user));
+          navigate("/user/profile", {
+            replace: true,
+          });
+        } else {
+          toast.error(res?.data?.message);
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      } finally {
+        setLoading(true);
+      }
+    } else {
+      try {
+        const res = await apiClient.post(`/mfaUpdate/2fa/verify`, {
+          token: mfa(),
+          id: authCode().id,
+        });
+        console.log("res", res);
+        if (res.status == 200) {
+          toast.success(res?.data?.message);
+          setUserToStore(res?.data?.user);
+          navigate(`/user/home`, { replace: true });
+        } else {
+          toast.error(res?.data?.message);
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      } finally {
+        setLoading(true);
+      }
     }
   };
 
@@ -94,21 +188,6 @@ const Login: Component<{}> = (props) => {
         marginTop: "10vh",
       }}
     >
-      {/* <Typography variant="h1" color="primary">
-        Hello Login
-      </Typography>
-      <Typography variant="h1" color="primary">
-        Current Theme: {theme().palette.mode}
-      </Typography>
-
-      <div>
-        <h1>Theme {theme().palette.mode}</h1>
-        <button onClick={() => changeTheme("light")}>Light Theme</button>
-        <button onClick={() => changeTheme("dark")}>Dark Theme</button>
-        <button onClick={() => changeTheme("red")}>Red Theme</button>
-        <button onClick={() => changeTheme("blue")}>Blue Theme</button>
-        <button onClick={() => changeTheme("green")}>Green Theme</button>
-      </div> */}
       <Card sx={{ gap: "1em", padding: "2em" }}>
         <CardContent
           sx={{
@@ -188,6 +267,38 @@ const Login: Component<{}> = (props) => {
           <AuthBtn />
         </CardActions>
       </Card>
+      <Dialog
+        fullWidth={true}
+        TransitionComponent={Transition}
+        maxWidth={"xs"}
+        open={open()}
+        onClose={handleClose}
+      >
+        <DialogTitle>
+          MFA Code for {authCode().mfa == 1 ? "Email" : "Auth APP"}
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            margin: "1em",
+            padding: "1em",
+            paddingTop: "1em !important",
+          }}
+        >
+          <TextField
+            id="outlined-basic"
+            label="Code"
+            variant="outlined"
+            fullWidth
+            value={mfa()}
+            onChange={(e) => setMfa(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+          <Button variant="outlined" onClick={handleVerify2f}>
+            Enter
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
