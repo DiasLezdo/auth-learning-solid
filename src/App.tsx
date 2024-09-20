@@ -11,6 +11,8 @@ import SignUp from "./pages/register/SignUp";
 import Otp from "./pages/register/Otp";
 import OauthPage from "./pages/register/OauthPage";
 import ForgotPassword from "./pages/register/ForgotPassword";
+import Privacy from "./pages/policy&Terms/Privacy";
+import Terms from "./pages/policy&Terms/Terms";
 const Login = lazy(() => import("./pages/register/Login"));
 
 const App: Component = () => {
@@ -23,6 +25,8 @@ const App: Component = () => {
           <Route path="/signup" component={SignUp} />
           <Route path="/otp" component={Otp} />
           <Route path="/forgot" component={ForgotPassword} />
+          <Route path="/privacy" component={Privacy} />
+          <Route path="/terms" component={Terms} />
         </Route>
         <Route path="/auth-callback" component={OauthPage} />
 

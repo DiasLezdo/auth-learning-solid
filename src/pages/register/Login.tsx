@@ -193,6 +193,7 @@ const Login: Component<{}> = (props) => {
         justifyContent: "center",
         alignItems: "center",
         marginTop: "10vh",
+        flexDirection: "column",
       }}
     >
       <Card sx={{ gap: "1em", padding: "2em" }}>
@@ -288,6 +289,31 @@ const Login: Component<{}> = (props) => {
           <AuthBtn />
         </CardActions>
       </Card>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "5em",
+          marginTop: ".3em",
+        }}
+      >
+        <A
+          href="/privacy"
+          style={{
+            "text-decoration": "none",
+          }}
+        >
+          Privacy & Policy
+        </A>
+        <A
+          href="/terms"
+          style={{
+            "text-decoration": "none",
+          }}
+        >
+          Terms & Conditions
+        </A>
+      </Box>
       <Dialog
         fullWidth={true}
         TransitionComponent={Transition}

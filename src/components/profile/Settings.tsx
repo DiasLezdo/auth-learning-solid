@@ -156,6 +156,7 @@ const Settings = (props: Props) => {
                     <Checkbox
                       color="primary"
                       checked={mfa() && mfaType() == 1}
+                      disabled={mfa() && mfaType() == 1}
                       onChange={async (event, checked) => {
                         await mfaChange(checked ? 1 : null);
                         setMfaType(checked ? 1 : 2);
@@ -169,6 +170,7 @@ const Settings = (props: Props) => {
                     <Checkbox
                       color="primary"
                       checked={mfa() && mfaType() == 2}
+                      disabled={mfa() && mfaType() == 2}
                       onChange={async (event, checked) => {
                         await mfaChange(checked ? 2 : null);
                         setMfaType(checked ? 2 : 1);
