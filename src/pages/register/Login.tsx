@@ -4,6 +4,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -18,13 +19,19 @@ import {
   TextField,
   Typography,
 } from "@suid/material";
-import { Component, createSignal, JSXElement, useContext } from "solid-js";
+import {
+  Component,
+  createSignal,
+  JSXElement,
+  Show,
+  useContext,
+} from "solid-js";
 import { BiSolidLogInCircle } from "solid-icons/bi";
 import { Visibility, VisibilityOff } from "@suid/icons-material";
 import AuthBtn from "../../components/common/AuthBtn";
 import toast from "solid-toast";
 import useAuthAppStore from "../../store/store";
-import { useNavigate } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import apiClient from "../../services/backend";
 import PrivacyTipRoundedIcon from "@suid/icons-material/PrivacyTipRounded";
 import { TransitionProps } from "@suid/material/transitions/transition";
@@ -155,7 +162,7 @@ const Login: Component<{}> = (props) => {
       } catch (error) {
         console.error("An error occurred:", error);
       } finally {
-        setLoading(true);
+        setLoading(false);
       }
     } else {
       try {
@@ -174,7 +181,7 @@ const Login: Component<{}> = (props) => {
       } catch (error) {
         console.error("An error occurred:", error);
       } finally {
-        setLoading(true);
+        setLoading(false);
       }
     }
   };
@@ -251,6 +258,20 @@ const Login: Component<{}> = (props) => {
                 />
               </FormControl>
             </Grid>
+            <Grid item xs={12}>
+              <Typography color="text.primary" sx={{ fontSize: "14px" }}>
+                Forgot{" "}
+                <A
+                  href="/forgot"
+                  style={{
+                    "text-decoration": "none",
+                  }}
+                  activeClass="none"
+                >
+                  Password?
+                </A>
+              </Typography>
+            </Grid>
           </Grid>
         </CardContent>
         <CardActions
@@ -288,15 +309,23 @@ const Login: Component<{}> = (props) => {
             id="outlined-basic"
             label="Code"
             variant="outlined"
+            type="number"
             fullWidth
             value={mfa()}
             onChange={(e) => setMfa(e.target.value)}
           />
         </DialogContent>
         <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-          <Button variant="outlined" onClick={handleVerify2f}>
-            Enter
-          </Button>
+          <Show
+            when={loading}
+            fallback={
+              <Button variant="outlined" onClick={handleVerify2f}>
+                Enter
+              </Button>
+            }
+          >
+            <CircularProgress color="secondary" size={20} />
+          </Show>
         </DialogActions>
       </Dialog>
     </Box>

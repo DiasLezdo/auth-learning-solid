@@ -57,6 +57,7 @@ apiClient.interceptors.response.use(
     } else {
       console.log("Error without response:", error); // Log if no response (network error, etc.)
     }
+    // here we can add 200 status message to but sometimes we change content often so we add toast manually in Front End based on status so we don't....
 
     if (error.response && error.response.status === 401) {
       // Handle unauthorized errors, such as redirecting to login
