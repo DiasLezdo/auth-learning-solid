@@ -317,7 +317,7 @@ const Login: Component<{}> = (props) => {
         </DialogContent>
         <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
           <Show
-            when={loading}
+            when={loading()}
             fallback={
               <Button variant="outlined" onClick={handleVerify2f}>
                 Enter
