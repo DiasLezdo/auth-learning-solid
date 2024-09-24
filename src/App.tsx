@@ -13,6 +13,8 @@ import OauthPage from "./pages/register/OauthPage";
 import ForgotPassword from "./pages/register/ForgotPassword";
 import Privacy from "./pages/policy&Terms/Privacy";
 import Terms from "./pages/policy&Terms/Terms";
+import AddFriends from "./pages/Private/AddFriends";
+import Friends from "./pages/Private/Friends";
 const Login = lazy(() => import("./pages/register/Login"));
 
 const App: Component = () => {
@@ -34,6 +36,8 @@ const App: Component = () => {
           <Route path="/home" component={Home} />
           <Route path="/about" component={About} />
           <Route path="/profile" component={Profile} />
+          <Route path="/add-friends" component={AddFriends} />
+          <Route path="/friends" component={Friends} />
         </Route>
       </Router>
     </ThemeProviderContext>

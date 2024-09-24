@@ -5,7 +5,7 @@ const About: Component<{}> = (props) => {
   
     return (
       <Box>
-        <Typography variant="h1" color="primary">Hello About</Typography>
+        <Typography variant="h1" color="primary">Message</Typography>
       </Box>
     );
 };

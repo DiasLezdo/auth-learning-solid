@@ -1,5 +1,5 @@
 import { Box, Button, Card, Grid, Typography } from "@suid/material";
-import { Component } from "solid-js";
+import { Component, ErrorBoundary } from "solid-js";
 import useAuthAppStore from "../../store/store";
 import { useNavigate } from "@solidjs/router";
 import apiClient from "../../services/backend";
@@ -56,7 +56,27 @@ const Profile: Component<{}> = (props) => {
             <Details />
           </Grid>
           <Grid item xs={12} md={4}>
-            <Settings handleLogout={handleLogout} />
+            <ErrorBoundary
+              fallback={(err) => (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="h5" color="error">
+                    Error Occurred{" "}
+                    <Typography variant="caption">
+                      {" "}
+                      Error: {err.message}
+                    </Typography>
+                  </Typography>
+                </Box>
+              )}
+            >
+              <Settings handleLogout={handleLogout} />
+            </ErrorBoundary>
           </Grid>
         </Grid>
       </Card>

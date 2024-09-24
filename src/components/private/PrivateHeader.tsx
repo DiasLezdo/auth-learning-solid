@@ -24,7 +24,7 @@ const PrivateHeader: Component<{}> = (props) => {
         justifyContent: "space-between",
         alignItems: "center",
         padding: { md: "1em", xs: "2px" },
-        height: { md: "50px", xs: "30px" },
+        height: { md: "50px", xs: "50px" },
       }}
     >
       <WiAlien size={70} color="#8B9464" />
@@ -51,6 +51,15 @@ const PrivateHeader: Component<{}> = (props) => {
             }}
           >
             Message
+          </A>
+          <A
+            href="/user/add-friends"
+            style={{
+              color: theme.palette.secondary.dark,
+              "text-decoration": "none",
+            }}
+          >
+            Add
           </A>
           <A
             href="/user/profile"

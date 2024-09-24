@@ -32,3 +32,8 @@ body.light {
   /* padding: 2px 5px; */
   transition: color 0.3s ease-in-out;
 }
+
+
+.cursor-pointer{
+  cursor: pointer;
+}
