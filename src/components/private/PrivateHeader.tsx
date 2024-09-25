@@ -4,8 +4,11 @@ import { Component, createEffect, createMemo, useContext } from "solid-js";
 import { WiAlien } from "solid-icons/wi";
 import { deepOrange } from "@suid/material/colors";
 import ThemeSwitch from "../common/ThemeSwitch";
+import useAuthAppStore from "../../store/store";
 
 const PrivateHeader: Component<{}> = (props) => {
+  const userDetail = useAuthAppStore((s) => s.user); //optimize code
+
   const theme = useTheme();
 
   const location = useLocation();
@@ -68,6 +71,7 @@ const PrivateHeader: Component<{}> = (props) => {
             }}
           >
             <Avatar
+              src={userDetail?.photo}
               sx={{
                 bgcolor: deepOrange[500],
                 cursor: "pointer",

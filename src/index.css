@@ -33,7 +33,14 @@ body.light {
   transition: color 0.3s ease-in-out;
 }
 
+.active:hover {
+  text-decoration: underline;
+}
 
-.cursor-pointer{
+.cursor-pointer {
   cursor: pointer;
+}
+
+.text_underline:hover {
+  text-decoration: underline !important;
 }

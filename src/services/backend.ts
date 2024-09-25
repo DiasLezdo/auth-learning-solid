@@ -69,10 +69,17 @@ apiClient.interceptors.response.use(
       toast.error(error.response.data?.message || "Server Error");
     } else if (error.response && error.response.status === 400) {
       // Handle bad request errors
-      toast.error(error.response.data?.message || "Bad Request");
+      toast.error(
+        error.response.data?.message ||
+          error.response.data?.error ||
+          "Bad Request"
+      );
     } else if (error.response && error.response.status === 404) {
       // Handle bad request errors
       toast.error(error.response.data?.message || "Not Found");
+    } else if (error.response && error.response.status === 403) {
+      // Handle not authorized to access errors
+      toast.error(error.response.data?.message || "You are not authorized");
     } else {
       // Handle other status codes
       toast.error("An unknown error occurred");

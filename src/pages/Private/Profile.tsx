@@ -8,7 +8,7 @@ import Details from "../../components/profile/Details";
 import Settings from "../../components/profile/Settings";
 
 const Profile: Component<{}> = (props) => {
-  const userDetail = useAuthAppStore((s) => s.user); //optimize code
+  
 
   const removeUser = useAuthAppStore((s) => s.removeUser);
 
