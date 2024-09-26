@@ -1,4 +1,4 @@
-import { Card } from "@suid/material";
+import { Card, Container } from "@suid/material";
 import { Component, createEffect, createResource } from "solid-js";
 import UserDetails from "../../components/userProfile/UserDetails";
 import UserPosts from "../../components/userProfile/UserPosts";
@@ -43,7 +43,9 @@ const UserProfile = () => {
           user_name={user()?.user_name || ""}
         />
       </Card>
-      <UserPosts user_name={params.user_name || ""} />
+      <Container maxWidth="md">
+        <UserPosts user_name={params.user_name || ""} />
+      </Container>
     </>
   );
 };

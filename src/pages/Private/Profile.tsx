@@ -1,4 +1,4 @@
-import { Box, Button, Card, Grid, Typography } from "@suid/material";
+import { Box, Button, Card, Container, Grid, Typography } from "@suid/material";
 import { Component, ErrorBoundary } from "solid-js";
 import useAuthAppStore from "../../store/store";
 import { useNavigate } from "@solidjs/router";
@@ -79,7 +79,9 @@ const Profile: Component<{}> = (props) => {
           </Grid>
         </Grid>
       </Card>
-      <MyPosts />
+      <Container maxWidth="md">
+        <MyPosts />
+      </Container>
     </>
   );
 };
