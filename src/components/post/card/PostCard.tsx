@@ -1,4 +1,10 @@
-import { createSignal, Show } from "solid-js";
+import {
+  createEffect,
+  createResource,
+  createSignal,
+  Show,
+  Suspense,
+} from "solid-js";
 import {
   Button,
   Card,
@@ -9,12 +15,17 @@ import {
   IconButton,
   Box,
   Avatar,
+  CircularProgress,
 } from "@suid/material";
 import ThumbUpIcon from "@suid/icons-material/ThumbUp";
 import CommentIcon from "@suid/icons-material/Comment";
 import ShareIcon from "@suid/icons-material/Share";
 import { A } from "@solidjs/router";
-import { Post } from "../../../types/posts";
+import { Comment, Post } from "../../../types/posts";
+import apiClient from "../../../services/backend";
+import toast from "solid-toast";
+import PrivacyTipRoundedIcon from "@suid/icons-material/PrivacyTipRounded";
+import PostComment from "./PostComment";
 
 // Type for the user object inside the post
 
@@ -23,6 +34,45 @@ const PostCard = (props: Post) => {
   const [liked, setLiked] = createSignal(false);
   const [showCommentSection, setShowCommentSection] = createSignal(false);
   const [comment, setComment] = createSignal("");
+  const [commentLoading, setCommentLoading] = createSignal(false);
+
+  // get comments
+
+  const fetchComments = async () => {
+    const response = await apiClient.get(`/post/comments/${props._id}`);
+    return response.data.comments;
+  };
+
+  const [comments, { refetch }] = createResource(
+    () => (showCommentSection() ? props._id : null), // Trigger fetch only when showCommentSection is true
+    fetchComments
+  );
+
+  const handleAddComment = async () => {
+    if (!comment()) {
+      return toast("Need Comment", {
+        icon: <PrivacyTipRoundedIcon color="primary" />,
+        position: "top-right",
+      });
+    }
+    setCommentLoading(true);
+    try {
+      const response = await apiClient.post(`/post/comment/${props._id}`, {
+        text: comment(),
+      });
+      if (response.status === 200) {
+        refetch();
+      }
+      console.log("response", response);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setCommentLoading(false);
+      setComment("");
+    }
+  };
+
+  createEffect(() => console.log("commentsList()", comments()));
 
   return (
     <Card sx={{ width: "100%", margin: "20px 0" }}>
@@ -125,17 +175,24 @@ const PostCard = (props: Post) => {
             <TextField
               fullWidth
               variant="outlined"
+              size="small"
               placeholder="Write a comment..."
               value={comment()}
-              onInput={(e) => setComment((e.target as HTMLInputElement).value)}
+              onChange={(e) => setComment((e.target as HTMLInputElement).value)}
               sx={{ marginBottom: "10px" }}
             />
             <Button
               variant="contained"
-              onClick={() => alert("Comment Posted!")}
+              onClick={handleAddComment}
+              disabled={commentLoading()}
             >
-              Post Comment
+              Add
             </Button>
+            <Suspense fallback={<CircularProgress color="secondary" />}>
+              {comments()?.map((e: Comment) => (
+                <PostComment comment={e} />
+              ))}
+            </Suspense>
           </CardContent>
         </Card>
       </Show>

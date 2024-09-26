@@ -6,7 +6,7 @@ interface User {
 }
 
 // Type for comments (if needed)
-interface Comment {
+export interface Comment {
   user: User;
   text: string;
   createdAt: string;
@@ -22,7 +22,7 @@ export interface Post {
   mediaUrl: string; // URL to media (image/video)
   isPublic: boolean; // Privacy setting
   likes: string[]; // Array of user IDs (for simplicity, represented as strings)
-  comments: Comment[]; // Array of comments
+  // comments: Comment[]; // Array of comments
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
   isLiked: boolean;

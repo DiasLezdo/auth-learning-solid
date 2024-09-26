@@ -83,7 +83,7 @@ const UserPosts: Component<{ user_name: string }> = (props) => {
                   mediaUrl={user.mediaUrl}
                   isPublic={user.isPublic}
                   likes={user.likes}
-                  comments={user.comments}
+                //   comments={user.comments}
                   createdAt={user.createdAt}
                   updatedAt={user.updatedAt}
                   isLiked
