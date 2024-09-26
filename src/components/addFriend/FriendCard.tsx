@@ -4,6 +4,7 @@ import { Component, createSignal } from "solid-js";
 import { BsPersonFillAdd } from "solid-icons/bs";
 import apiClient from "../../services/backend";
 import toast from "solid-toast";
+import { A } from "@solidjs/router";
 
 interface Props {
   user_name: string;
@@ -50,12 +51,19 @@ const FriendCard: Component<Props> = (props) => {
           }}
         >
           <Grid item md={1} xs={2}>
-            <Avatar
-              sx={{ bgcolor: deepOrange[500] }}
-              variant="square"
-              alt={props.first_name}
-              src={props.profile}
-            />
+            <A
+              href={"/user/friend/" + props.user_name}
+              style={{
+                "text-decoration": "none",
+              }}
+            >
+              <Avatar
+                sx={{ bgcolor: deepOrange[500] }}
+                variant="square"
+                alt={props.first_name}
+                src={props.profile}
+              />
+            </A>
           </Grid>
           <Grid item md={8} xs={6} direction={"column"}>
             <Typography variant="subtitle2" color="primary">

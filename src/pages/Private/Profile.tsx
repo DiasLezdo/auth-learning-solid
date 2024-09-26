@@ -6,10 +6,9 @@ import apiClient from "../../services/backend";
 import toast from "solid-toast";
 import Details from "../../components/profile/Details";
 import Settings from "../../components/profile/Settings";
+import MyPosts from "../../components/profile/MyPosts";
 
 const Profile: Component<{}> = (props) => {
-  
-
   const removeUser = useAuthAppStore((s) => s.removeUser);
 
   // console.log("userDetails", userDetail);
@@ -80,6 +79,7 @@ const Profile: Component<{}> = (props) => {
           </Grid>
         </Grid>
       </Card>
+      <MyPosts />
     </>
   );
 };

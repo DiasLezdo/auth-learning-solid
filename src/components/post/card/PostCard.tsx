@@ -14,37 +14,9 @@ import ThumbUpIcon from "@suid/icons-material/ThumbUp";
 import CommentIcon from "@suid/icons-material/Comment";
 import ShareIcon from "@suid/icons-material/Share";
 import { A } from "@solidjs/router";
+import { Post } from "../../../types/posts";
 
 // Type for the user object inside the post
-interface User {
-  first_name: string;
-  last_name: string;
-  user_name: string;
-  photo: string;
-}
-
-// Type for comments (if needed)
-interface Comment {
-  user: User;
-  text: string;
-  createdAt: string;
-  photo: string;
-}
-
-// Main Post interface
-interface Post {
-  _id: string; // MongoDB generates a string ID
-  user: User;
-  content: string;
-  mediaType: "image" | "video" | null; // Enum for mediaType
-  mediaUrl: string; // URL to media (image/video)
-  isPublic: boolean; // Privacy setting
-  likes: string[]; // Array of user IDs (for simplicity, represented as strings)
-  comments: Comment[]; // Array of comments
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
-  isLiked: boolean;
-}
 
 const PostCard = (props: Post) => {
   // State signals for like, comment visibility, and comment input
@@ -74,7 +46,7 @@ const PostCard = (props: Post) => {
           >
             <Avatar src={props.user.photo} />
             <A
-              href={`/user/profile/${props.user.user_name}`}
+              href={`/user/friend/${props.user.user_name}`}
               style={{
                 color: "text.primary",
                 "text-decoration": "none",

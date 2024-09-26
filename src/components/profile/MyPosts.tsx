@@ -8,22 +8,23 @@ import {
   onCleanup,
   Show,
 } from "solid-js";
-import PostCard from "./card/PostCard";
+import PostCard from "../post/card/PostCard";
 import apiClient from "../../services/backend";
 import { Post } from "../../types/posts";
+import useAuthAppStore from "../../store/store";
 
 // Type for the user object inside the post
 
+const MyPosts: Component<{}> = (props) => {
+  const userDetail = useAuthAppStore((s) => s.user); //optimize code
 
-interface Props {
-  trigger: boolean;
-}
-
-const Posts: Component<Props> = (props) => {
   const fetchPosts = async (page: number, limit: number) => {
-    const response = await apiClient.get(`/post/all`, {
-      params: { page, limit, isPublic: true },
-    });
+    const response = await apiClient.get(
+      `/post/all/user/${userDetail?.user_name}`,
+      {
+        params: { page, limit, isPublic: null },
+      }
+    );
 
     return response.data;
   };
@@ -33,17 +34,10 @@ const Posts: Component<Props> = (props) => {
   const [page, setPage] = createSignal(1);
   const [postsLists, setPostsLists] = createSignal<Post[]>([]);
 
-  const [posts, { refetch }] = createResource(
+  const [posts] = createResource(
     () => ({ page: page() }),
     async ({ page }) => fetchPosts(page, limit)
   );
-
-  createEffect(() => {
-    if (props.trigger) {
-      setPage(1);
-      refetch();
-    }
-  });
 
   createEffect(() => {
     if (posts()?.data) {
@@ -119,4 +113,4 @@ const Posts: Component<Props> = (props) => {
   );
 };
 
-export default Posts;
+export default MyPosts;

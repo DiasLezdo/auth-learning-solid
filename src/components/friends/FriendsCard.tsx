@@ -3,6 +3,7 @@ import { deepOrange } from "@suid/material/colors";
 import { Component } from "solid-js";
 import { AiOutlineMessage } from "solid-icons/ai";
 import { VsPreview } from "solid-icons/vs";
+import { useNavigate } from "@solidjs/router";
 
 interface Props {
   user_name: string;
@@ -12,6 +13,8 @@ interface Props {
 }
 
 const FriendsCard: Component<Props> = (props) => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Paper sx={{ margin: "1em 0.5em", cursor: "pointer" }}>
@@ -51,7 +54,7 @@ const FriendsCard: Component<Props> = (props) => {
             direction={"row"}
           >
             <Button
-              //   onClick={() => handleClickAccept(props.user_name)}
+              onClick={() => navigate(`/user/friend/${props.user_name}`)}
               startIcon={<VsPreview />}
               sx={{ marginRight: "5px" }}
             >

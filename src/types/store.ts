@@ -16,6 +16,7 @@ export type User = {
   account_type: string;
   verified: boolean;
   mfa: number;
+  user_name: string;
 };
 
 export interface userSlice {

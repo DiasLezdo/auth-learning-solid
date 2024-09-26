@@ -22,7 +22,11 @@ import useAuthAppStore from "../../store/store";
 import apiClient from "../../services/backend";
 import toast from "solid-toast";
 
-const AddPost: Component<{}> = (props) => {
+interface Props {
+  setTrigger: (value: boolean) => void;
+}
+
+const AddPost: Component<Props> = (props) => {
   const userDetail = useAuthAppStore((s) => s.user); //optimize code
 
   const [text, setText] = createSignal("");
@@ -36,6 +40,14 @@ const AddPost: Component<{}> = (props) => {
   const handleFileChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
     const selectedFile = target.files?.[0];
+
+    // Check file size
+    if (selectedFile && selectedFile.size > 25 * 1024 * 1024) {
+      // 25MB limit
+      alert("File size exceeds limit (25MB). Please choose a smaller file.");
+      return;
+    }
+
     if (selectedFile) {
       setFile(selectedFile);
       const fileURL = URL.createObjectURL(selectedFile);
@@ -69,6 +81,7 @@ const AddPost: Component<{}> = (props) => {
       if (res.status == 200) {
         toast.success(res?.data?.message);
         console.log("res.data", res.data);
+        props.setTrigger(true);
       }
     } catch (error) {
       console.error("An error occurred:", error);

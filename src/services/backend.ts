@@ -61,12 +61,20 @@ apiClient.interceptors.response.use(
 
     if (error.response && error.response.status === 401) {
       // Handle unauthorized errors, such as redirecting to login
-      toast.error(error.response.data?.message || "Unauthorized");
+      toast.error(
+        error.response.data?.message ||
+          error.response.data?.error ||
+          "Unauthorized"
+      );
       window.location.href = "/";
       localStorage.removeItem("user");
     } else if (error.response && error.response.status === 500) {
       // Handle server errors
-      toast.error(error.response.data?.message || "Server Error");
+      toast.error(
+        error.response.data?.message ||
+          error.response.data?.error ||
+          "Server Error"
+      );
     } else if (error.response && error.response.status === 400) {
       // Handle bad request errors
       toast.error(
@@ -76,10 +84,18 @@ apiClient.interceptors.response.use(
       );
     } else if (error.response && error.response.status === 404) {
       // Handle bad request errors
-      toast.error(error.response.data?.message || "Not Found");
+      toast.error(
+        error.response.data?.message ||
+          error.response.data?.error ||
+          "Not Found"
+      );
     } else if (error.response && error.response.status === 403) {
       // Handle not authorized to access errors
-      toast.error(error.response.data?.message || "You are not authorized");
+      toast.error(
+        error.response.data?.message ||
+          error.response.data?.error ||
+          "You are not authorized"
+      );
     } else {
       // Handle other status codes
       toast.error("An unknown error occurred");

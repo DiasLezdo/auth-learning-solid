@@ -1,4 +1,4 @@
-import { Component, createEffect } from "solid-js";
+import { Component, createEffect, createSignal } from "solid-js";
 import { Box, Container, Typography } from "@suid/material";
 import { useLocation } from "@solidjs/router";
 import AddPost from "../../components/post/AddPost";
@@ -10,10 +10,18 @@ const Home: Component<{}> = (props) => {
   // get state from URL
   createEffect(() => console.log("location", location.state));
 
+  const [trigger, setTrigger] = createSignal(false);
+
+  createSignal(() =>
+    setTimeout(() => {
+      return setTrigger(false);
+    }, 100)
+  );
+
   return (
-    <Container >
-      <AddPost />
-      <Posts />
+    <Container>
+      <AddPost setTrigger={setTrigger} />
+      <Posts trigger={trigger()} />
     </Container>
   );
 };
