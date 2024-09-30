@@ -7,6 +7,7 @@ interface User {
 
 // Type for comments (if needed)
 export interface Comment {
+  _id: string;
   user: User;
   text: string;
   createdAt: string;

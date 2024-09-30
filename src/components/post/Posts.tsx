@@ -14,7 +14,6 @@ import { Post } from "../../types/posts";
 
 // Type for the user object inside the post
 
-
 interface Props {
   trigger: boolean;
 }
@@ -88,11 +87,11 @@ const Posts: Component<Props> = (props) => {
                   mediaType={user.mediaType}
                   mediaUrl={user.mediaUrl}
                   isPublic={user.isPublic}
-                  likes={user.likes}
-                  comments={user.comments}
+                  isLiked={user.isLiked}
+                  // comments={user.comments}
                   createdAt={user.createdAt}
                   updatedAt={user.updatedAt}
-                  isLiked
+                  likes={user.likes}
                 />
               )}
             </For>

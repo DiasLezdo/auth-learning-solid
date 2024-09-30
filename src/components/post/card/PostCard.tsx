@@ -19,22 +19,29 @@ import {
 } from "@suid/material";
 import ThumbUpIcon from "@suid/icons-material/ThumbUp";
 import CommentIcon from "@suid/icons-material/Comment";
-import ShareIcon from "@suid/icons-material/Share";
+import PreviewRoundedIcon from "@suid/icons-material/PreviewRounded";
 import { A } from "@solidjs/router";
 import { Comment, Post } from "../../../types/posts";
 import apiClient from "../../../services/backend";
 import toast from "solid-toast";
 import PrivacyTipRoundedIcon from "@suid/icons-material/PrivacyTipRounded";
 import PostComment from "./PostComment";
+import useAuthAppStore from "../../../store/store";
 
 // Type for the user object inside the post
 
 const PostCard = (props: Post) => {
+  const userDetail = useAuthAppStore((s) => s.user); //optimize code
   // State signals for like, comment visibility, and comment input
-  const [liked, setLiked] = createSignal(false);
+  const [liked, setLiked] = createSignal(props.isLiked);
+  const [likeCount, setLikeCount] = createSignal(props.likes.length);
   const [showCommentSection, setShowCommentSection] = createSignal(false);
   const [comment, setComment] = createSignal("");
   const [commentLoading, setCommentLoading] = createSignal(false);
+
+  console.log("liked()", props.isLiked);
+
+  const postOwner = userDetail?.user_name == props.user.user_name;
 
   // get comments
 
@@ -72,7 +79,19 @@ const PostCard = (props: Post) => {
     }
   };
 
-  createEffect(() => console.log("commentsList()", comments()));
+  const handleLikes = async (id: string) => {
+    try {
+      const response = await apiClient.post(
+        `/post/${!liked() ? "like" : "unlike"}/${id}`
+      );
+      if (response.status === 200) {
+        setLiked(!liked());
+        setLikeCount((prev) => (!liked() ? prev - 1 : prev + 1));
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  };
 
   return (
     <Card sx={{ width: "100%", margin: "20px 0" }}>
@@ -146,19 +165,22 @@ const PostCard = (props: Post) => {
       </CardContent>
       <CardActions>
         <IconButton
-          onClick={() => setLiked(!liked())}
+          onClick={() => handleLikes(props._id)}
           color={liked() ? "secondary" : "primary"}
         >
           {/* <ThumbUpIcon /> {liked() ? "Liked" : "Like"} */}
           <ThumbUpIcon color={liked() ? "secondary" : "primary"} />
         </IconButton>
+        <Typography variant="caption" color="primary">
+          {likeCount()}
+        </Typography>
         <IconButton
           onClick={() => setShowCommentSection(!showCommentSection())}
         >
           <CommentIcon />
         </IconButton>
         <IconButton>
-          <ShareIcon />
+          <PreviewRoundedIcon />
         </IconButton>
       </CardActions>
 
@@ -190,7 +212,13 @@ const PostCard = (props: Post) => {
             </Button>
             <Suspense fallback={<CircularProgress color="secondary" />}>
               {comments()?.map((e: Comment) => (
-                <PostComment comment={e} />
+                <PostComment
+                  comment={e}
+                  refetch={refetch}
+                  postOwner={postOwner}
+                  user={userDetail?.user_name!}
+                  postId={props._id}
+                />
               ))}
             </Suspense>
           </CardContent>
