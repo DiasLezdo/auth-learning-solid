@@ -22,7 +22,7 @@ export interface Post {
   mediaType: "image" | "video" | null; // Enum for mediaType
   mediaUrl: string; // URL to media (image/video)
   isPublic: boolean; // Privacy setting
-  likes: string[]; // Array of user IDs (for simplicity, represented as strings)
+  likes: User[]; // Array of user IDs (for simplicity, represented as strings)
   // comments: Comment[]; // Array of comments
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
