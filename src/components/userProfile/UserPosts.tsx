@@ -17,7 +17,7 @@ import { Post } from "../../types/posts";
 const UserPosts: Component<{ user_name: string }> = (props) => {
   const fetchPosts = async (page: number, limit: number) => {
     const response = await apiClient.get(`/post/all/user/${props.user_name}`, {
-      params: { page, limit, isPublic: true },
+      params: { page, limit, isPublic: "true" },
     });
 
     return response.data;
@@ -83,7 +83,7 @@ const UserPosts: Component<{ user_name: string }> = (props) => {
                   mediaUrl={user.mediaUrl}
                   isPublic={user.isPublic}
                   likes={user.likes}
-                //   comments={user.comments}
+                  //   comments={user.comments}
                   createdAt={user.createdAt}
                   updatedAt={user.updatedAt}
                   isLiked

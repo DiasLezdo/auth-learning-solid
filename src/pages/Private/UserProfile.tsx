@@ -14,9 +14,16 @@ const UserProfile = () => {
 
   const userDetail = useAuthAppStore((s) => s.user); //optimize code
 
-  if (userDetail?.user_name == params.user_name) {
-    return navigate("/user/profile");
-  }
+  // Use createEffect to handle the navigation logic without affecting the JSX return type
+  createEffect(() => {
+    if (userDetail?.user_name === params.user_name) {
+      navigate("/user/profile");
+    }
+  });
+
+  // if (userDetail?.user_name == params.user_name) {
+  //   return navigate("/user/profile");
+  // }
   const fetchUser = async () => {
     const response = await apiClient.get(`/getOtheruser/${params.user_name}`);
 

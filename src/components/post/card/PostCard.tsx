@@ -20,7 +20,7 @@ import {
 import ThumbUpIcon from "@suid/icons-material/ThumbUp";
 import CommentIcon from "@suid/icons-material/Comment";
 import PreviewRoundedIcon from "@suid/icons-material/PreviewRounded";
-import { A } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import { Comment, Post } from "../../../types/posts";
 import apiClient from "../../../services/backend";
 import toast from "solid-toast";
@@ -30,18 +30,18 @@ import useAuthAppStore from "../../../store/store";
 
 // Type for the user object inside the post
 
-const PostCard = (props: Post) => {
+const PostCard = (props: Post & { hideView?: boolean }) => {
   const userDetail = useAuthAppStore((s) => s.user); //optimize code
   // State signals for like, comment visibility, and comment input
-  const [liked, setLiked] = createSignal(props.isLiked);
-  const [likeCount, setLikeCount] = createSignal(props.likes.length);
+  const [liked, setLiked] = createSignal(props?.isLiked);
+  const [likeCount, setLikeCount] = createSignal(props.likes?.length);
   const [showCommentSection, setShowCommentSection] = createSignal(false);
   const [comment, setComment] = createSignal("");
   const [commentLoading, setCommentLoading] = createSignal(false);
 
-  console.log("liked()", props.isLiked);
+  const navigate = useNavigate();
 
-  const postOwner = userDetail?.user_name == props.user.user_name;
+  const postOwner = userDetail?.user_name == props.user?.user_name;
 
   // get comments
 
@@ -113,16 +113,16 @@ const PostCard = (props: Post) => {
               gap: "1em",
             }}
           >
-            <Avatar src={props.user.photo} />
+            <Avatar src={props.user?.photo} />
             <A
-              href={`/user/friend/${props.user.user_name}`}
+              href={`/user/friend/${props.user?.user_name}`}
               style={{
                 color: "text.primary",
                 "text-decoration": "none",
               }}
               class="text_underline"
             >
-              {props.user.user_name}
+              {props.user?.user_name}
             </A>
           </Box>
         </Box>
@@ -179,9 +179,13 @@ const PostCard = (props: Post) => {
         >
           <CommentIcon />
         </IconButton>
-        <IconButton>
-          <PreviewRoundedIcon />
-        </IconButton>
+        {!props.hideView && (
+          <IconButton>
+            <PreviewRoundedIcon
+              onClick={() => navigate("/user/post/" + props._id)}
+            />
+          </IconButton>
+        )}
       </CardActions>
 
       <Show when={showCommentSection()}>

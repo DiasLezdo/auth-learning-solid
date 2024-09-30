@@ -16,6 +16,7 @@ import Terms from "./pages/policy&Terms/Terms";
 import AddFriends from "./pages/Private/AddFriends";
 import Friends from "./pages/Private/Friends";
 import UserProfile from "./pages/Private/UserProfile";
+import PostDetails from "./components/post/PostDetails";
 const Login = lazy(() => import("./pages/register/Login"));
 
 const App: Component = () => {
@@ -40,6 +41,7 @@ const App: Component = () => {
           <Route path="/add-friends" component={AddFriends} />
           <Route path="/friends" component={Friends} />
           <Route path="/friend/:user_name" component={UserProfile} />
+          <Route path="/post/:postId" component={PostDetails} />
         </Route>
       </Router>
     </ThemeProviderContext>
