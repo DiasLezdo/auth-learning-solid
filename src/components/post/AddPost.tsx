@@ -21,6 +21,7 @@ import AddPostInput from "./add/AddPostInput";
 import useAuthAppStore from "../../store/store";
 import apiClient from "../../services/backend";
 import toast from "solid-toast";
+import { optimizeImageUrl } from "../../services/optimizeImage";
 
 interface Props {
   setTrigger: (value: boolean) => void;
@@ -118,7 +119,7 @@ const AddPost: Component<Props> = (props) => {
                   gap: "1em",
                 }}
               >
-                <Avatar src={userDetail?.photo} />
+                <Avatar src={optimizeImageUrl(userDetail?.photo!, 100, "")} />
                 <AddPostInput setText={setText} text={text()} />
               </div>
               <Box

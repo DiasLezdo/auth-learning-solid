@@ -45,6 +45,7 @@ const Friends: Component<{}> = (props) => {
                 profile={user.photo}
                 first_name={user.first_name}
                 last_name={user.last_name ?? ""}
+                refetch={refetch}
               />
             )}
           </For>

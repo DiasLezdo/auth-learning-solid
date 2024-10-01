@@ -5,6 +5,7 @@ import { BsPersonFillAdd } from "solid-icons/bs";
 import apiClient from "../../services/backend";
 import toast from "solid-toast";
 import { A } from "@solidjs/router";
+import { optimizeImageUrl } from "../../services/optimizeImage";
 
 interface Props {
   user_name: string;
@@ -61,7 +62,7 @@ const FriendCard: Component<Props> = (props) => {
                 sx={{ bgcolor: deepOrange[500] }}
                 variant="square"
                 alt={props.first_name}
-                src={props.profile}
+                src={optimizeImageUrl(props.profile)}
               />
             </A>
           </Grid>

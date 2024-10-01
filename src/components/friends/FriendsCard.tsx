@@ -4,16 +4,32 @@ import { Component } from "solid-js";
 import { AiOutlineMessage } from "solid-icons/ai";
 import { VsPreview } from "solid-icons/vs";
 import { useNavigate } from "@solidjs/router";
+import { VsDiffRemoved } from "solid-icons/vs";
+import apiClient from "../../services/backend";
 
 interface Props {
   user_name: string;
   profile: string;
   first_name: string;
   last_name: string;
+  refetch: () => void;
 }
 
 const FriendsCard: Component<Props> = (props) => {
   const navigate = useNavigate();
+
+  const handleRemoveFriend = async () => {
+    try {
+      const res = await apiClient.post("/friend/remove-friend", {
+        friend_user_name: props.user_name,
+      });
+      if (res.status == 200) {
+        props.refetch();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -28,7 +44,7 @@ const FriendsCard: Component<Props> = (props) => {
             alignItems: "center",
           }}
         >
-          <Grid item md={1} xs={2}>
+          <Grid item md={1} xs={1}>
             <Avatar
               sx={{ bgcolor: deepOrange[500] }}
               variant="square"
@@ -36,7 +52,7 @@ const FriendsCard: Component<Props> = (props) => {
               src={props.profile}
             />
           </Grid>
-          <Grid item md={8} xs={6} direction={"column"}>
+          <Grid item md={5} xs={5} direction={"column"}>
             <Typography variant="subtitle2" color="primary">
               {props.first_name + " " + props.last_name}
             </Typography>
@@ -47,12 +63,20 @@ const FriendsCard: Component<Props> = (props) => {
 
           <Grid
             item
-            md={3}
-            xs={4}
+            md={6}
+            xs={6}
             container
             justifyContent="flex-end"
             direction={"row"}
           >
+            <Button
+              onClick={handleRemoveFriend}
+              startIcon={<VsDiffRemoved />}
+              sx={{ marginRight: "5px" }}
+              color="error"
+            >
+              Remove
+            </Button>
             <Button
               onClick={() => navigate(`/user/friend/${props.user_name}`)}
               startIcon={<VsPreview />}

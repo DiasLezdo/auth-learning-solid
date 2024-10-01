@@ -10,7 +10,11 @@ export function optimizeImageUrl(
   const versionIndex = urlParts.findIndex((part) => part.startsWith("v"));
 
   // Inject optimization parameters after the cloud name and project folder
-  urlParts.splice(versionIndex, 0, `c_thumb,w_${width},g_${gravity}`);
+  urlParts.splice(
+    versionIndex,
+    0,
+    gravity ? `c_thumb,w_${width},g_${gravity}` : `/w_300,h_200,c_fill/` //you can add more details or options or features here
+  );
 
   // Join the parts to create the optimized URL
   const optimizedUrl = urlParts.join("/");
