@@ -28,3 +28,14 @@ export interface Post {
   updatedAt: string; // ISO date string
   isLiked: boolean;
 }
+
+export interface Message {
+  _id: string;
+  sender: User;
+  receiver: User;
+  text: string;
+  files: string[]; 
+  read: boolean;
+  createdAt: string; // Date string in ISO format
+  updatedAt: string; // Date string in ISO format
+}
