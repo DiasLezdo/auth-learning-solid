@@ -1,10 +1,18 @@
-import { Box, Card, Container, Grid, Typography } from "@suid/material";
+import {
+  Box,
+  Card,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+} from "@suid/material";
 import {
   Component,
   createEffect,
   createResource,
   createSignal,
   For,
+  Show,
 } from "solid-js";
 import MessageUsers from "../../components/messages/MessageUsers";
 import MessageBox from "../../components/messages/MessageBox";
@@ -24,9 +32,15 @@ const About: Component<{}> = (props) => {
     return response.data;
   };
 
+  // API fetch function with pagination and search
+  const readChat = async () => {
+    const response = await apiClient.patch(`/message/${user()}/read`);
+    return response.data;
+  };
+
   const [messages, { refetch }] = createResource(() => {
     if (user()) {
-      return fetchMessages();
+      return Promise.all([readChat(), fetchMessages()]);
     }
   });
 
@@ -45,20 +59,36 @@ const About: Component<{}> = (props) => {
           </Grid>
           <Grid item md={8} xs={12}>
             <Card>
-              <Box
-                sx={{
-                  minHeight: "70vh",
-                  position: "relative",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
+              <Show
+                when={!messages?.loading}
+                fallback={
+                  <Box
+                    sx={{
+                      minHeight: "70vh",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <CircularProgress size="3rem" color="primary" />
+                  </Box>
+                }
               >
-                <MessageQueries
-                  messages={messages()?.data}
-                  currentUser={userDetail?.user_name ?? ""}
-                />
-                <MessageBox user={user()} />
-              </Box>
+                <Box
+                  sx={{
+                    minHeight: "70vh",
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <MessageQueries
+                    messages={messages()?.[1]?.data}
+                    currentUser={userDetail?.user_name ?? ""}
+                  />
+                  <MessageBox user={user()} />
+                </Box>
+              </Show>
             </Card>
           </Grid>
         </Grid>

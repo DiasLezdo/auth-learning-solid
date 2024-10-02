@@ -29,12 +29,20 @@ export interface Post {
   isLiked: boolean;
 }
 
+export interface MessageFiles {
+  url: string;
+  public_id: string;
+  original_name: string;
+  format: string;
+  size: number;
+}
+
 export interface Message {
   _id: string;
   sender: User;
   receiver: User;
   text: string;
-  files: string[]; 
+  files: MessageFiles[];
   read: boolean;
   createdAt: string; // Date string in ISO format
   updatedAt: string; // Date string in ISO format
