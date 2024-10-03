@@ -6,18 +6,19 @@ import {
   IconButton,
   Typography,
 } from "@suid/material";
-import { Component, createEffect, createSignal, For } from "solid-js";
-import { Message, MessageFiles } from "../../types/posts";
+import { Component, createEffect, createSignal, For, onMount } from "solid-js";
+import { Message, MessageFiles, MessagePagination } from "../../types/posts";
 import { optimizeImageUrl } from "../../services/optimizeImage";
 import DoneRoundedIcon from "@suid/icons-material/DoneRounded";
 import DoneAllRoundedIcon from "@suid/icons-material/DoneAllRounded";
 import DeleteForeverRoundedIcon from "@suid/icons-material/DeleteForeverRounded";
 import apiClient from "../../services/backend";
-import DeleteOutlineRoundedIcon from "@suid/icons-material/DeleteOutlineRounded";
 
 interface Props {
   messages: Message[] | undefined; // Expecting an array of messages or undefined
   currentUser: string;
+  setPage: () => void;
+  pagination: MessagePagination | undefined;
 }
 
 const MessageQueries: Component<Props> = (props) => {
@@ -40,6 +41,31 @@ const MessageQueries: Component<Props> = (props) => {
     }
   };
 
+  let boxRef!: HTMLDivElement;
+
+  const scrollToBottom = () => {
+    if (boxRef && props.pagination?.currentPage == 1) {
+      boxRef.scrollTop = boxRef.scrollHeight;
+    }
+  };
+
+  // On mount and when messages change, scroll to the bottom
+  onMount(scrollToBottom);
+
+  const handleScroll = () => {
+    if (
+      (props.pagination?.currentPage ?? 0) >=
+      (props.pagination?.totalPages ?? 0)
+    ) {
+      return;
+    } else if (boxRef.scrollTop === 0) {
+      console.log("scolling", props.pagination?.currentPage);
+      console.log("scolling2", props.pagination?.totalPages);
+
+      props.setPage();
+    }
+  };
+
   return (
     <>
       <Box
@@ -51,9 +77,11 @@ const MessageQueries: Component<Props> = (props) => {
           padding: "1em 0.5em",
           overflowY: "auto",
         }}
+        ref={boxRef}
+        onScroll={handleScroll}
       >
         {/* Render messages if they exist */}
-        {props.messages && props.messages.length > 0 ? (
+        {props.messages && props.messages.length > 0 && (
           <For each={props.messages}>
             {(message) => (
               <Box
@@ -185,22 +213,6 @@ const MessageQueries: Component<Props> = (props) => {
               </Box>
             )}
           </For>
-        ) : (
-          <Box
-            sx={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Typography>No messages found.</Typography>
-            <DeleteOutlineRoundedIcon
-              color="warning"
-              sx={{ fontSize: "5rem" }}
-            />
-          </Box>
         )}
       </Box>
       {/* dialog */}

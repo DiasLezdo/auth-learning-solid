@@ -14,21 +14,26 @@ import {
   For,
   Show,
 } from "solid-js";
-import MessageUsers from "../../components/messages/MessageUsers";
 import MessageBox from "../../components/messages/MessageBox";
 import MessageQueries from "../../components/messages/MessageQueries";
 import Messagers from "../../components/messages/Messagers";
 import apiClient from "../../services/backend";
 import useAuthAppStore from "../../store/store";
+import { Message } from "../../types/posts";
+import DeleteOutlineRoundedIcon from "@suid/icons-material/DeleteOutlineRounded";
 
 const About: Component<{}> = (props) => {
   const userDetail = useAuthAppStore((s) => s.user); //optimize code
 
   const [user, setUser] = createSignal<string>("");
+  const [messagesList, setMessagesList] = createSignal<Message[]>([]);
+  const [page, setPage] = createSignal<number>(1);
 
   // API fetch function with pagination and search
-  const fetchMessages = async () => {
-    const response = await apiClient.get(`/message/${user()}`);
+  const fetchMessages = async (page: number | string) => {
+    const response = await apiClient.get(
+      `/message/${user()}?page=${page}&limit=20`
+    );
     return response.data;
   };
 
@@ -38,15 +43,38 @@ const About: Component<{}> = (props) => {
     return response.data;
   };
 
-  const [messages, { refetch }] = createResource(() => {
+  // const [messages, { refetch }] = createResource(
+  //   () => page() && user(),
+  //   () => {
+  //     if (user()) {
+  //       return Promise.all([readChat(), fetchMessages(page())]);
+  //     }
+  //   }
+  // );
+
+  const [messages, { refetch }] = createResource(
+    () => [user(), page()], // Ensure both are dependencies
+    async ([user, page]) => {
+      if (user) {
+        return Promise.all([readChat(), fetchMessages(page)]);
+      }
+    }
+  );
+
+  createEffect(() => console.log("message()", messages()?.[1]?.data));
+  // createEffect(() => refetch([null, fetchMessages(page())]));
+
+  createEffect(() => {
     if (user()) {
-      return Promise.all([readChat(), fetchMessages()]);
+      setMessagesList([]);
+      setPage(1);
+      // refetch();
     }
   });
 
   createEffect(() => {
-    if (user()) {
-      refetch();
+    if (messages()?.[1]?.data) {
+      setMessagesList((prev) => [...messages()?.[1]?.data, ...prev]);
     }
   });
 
@@ -82,10 +110,41 @@ const About: Component<{}> = (props) => {
                     flexDirection: "column",
                   }}
                 >
-                  <MessageQueries
-                    messages={messages()?.[1]?.data}
-                    currentUser={userDetail?.user_name ?? ""}
-                  />
+                  {messagesList().length > 0 ? (
+                    <MessageQueries
+                      messages={messagesList()}
+                      currentUser={userDetail?.user_name ?? ""}
+                      setPage={() => setPage(page() + 1)}
+                      pagination={messages()?.[1]?.pagination}
+                    />
+                  ) : (
+                    <Box
+                      sx={{
+                        height: "56vh",
+                        position: "absolute",
+                        top: "0",
+                        width: "100%",
+                        padding: "1em 0.5em",
+                        overflowY: "auto",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          height: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Typography>No messages found.</Typography>
+                        <DeleteOutlineRoundedIcon
+                          color="warning"
+                          sx={{ fontSize: "5rem" }}
+                        />
+                      </Box>
+                    </Box>
+                  )}
                   <MessageBox user={user()} />
                 </Box>
               </Show>

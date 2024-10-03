@@ -47,3 +47,10 @@ export interface Message {
   createdAt: string; // Date string in ISO format
   updatedAt: string; // Date string in ISO format
 }
+
+export interface MessagePagination {
+  currentPage: number;
+  pageSize: number;
+  totalMessages: number;
+  totalPages: number;
+}
