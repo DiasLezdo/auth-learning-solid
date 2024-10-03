@@ -74,7 +74,7 @@ const About: Component<{}> = (props) => {
 
   createEffect(() => {
     if (messages()?.[1]?.data) {
-      setMessagesList((prev) => [...messages()?.[1]?.data, ...prev]);
+      setMessagesList((prev) => [...messages()?.[1]?.data?.reverse(), ...prev]);
     }
   });
 
@@ -137,7 +137,9 @@ const About: Component<{}> = (props) => {
                           justifyContent: "center",
                         }}
                       >
-                        <Typography>No messages found.</Typography>
+                        <Typography variant="caption" color="secondary">
+                          No messages found.
+                        </Typography>
                         <DeleteOutlineRoundedIcon
                           color="warning"
                           sx={{ fontSize: "5rem" }}
