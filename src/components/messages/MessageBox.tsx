@@ -12,7 +12,7 @@ import {
   MenuItem,
   TextField,
 } from "@suid/material";
-import { Component, createSignal, Show } from "solid-js";
+import { Component, createSignal, onCleanup, onMount, Show } from "solid-js";
 import { FiUpload } from "solid-icons/fi";
 import AddPhotoAlternateRoundedIcon from "@suid/icons-material/AddPhotoAlternateRounded";
 import ArticleRoundedIcon from "@suid/icons-material/ArticleRounded";
@@ -22,8 +22,13 @@ import apiClient from "../../services/backend";
 import toast from "solid-toast";
 import FilePresentIcon from "@suid/icons-material/FilePresent";
 import BackspaceRoundedIcon from "@suid/icons-material/BackspaceRounded";
+import { Message } from "../../types/posts";
+import socket from "../../services/socket";
 
-const MessageBox: Component<{ user: string }> = (props) => {
+const MessageBox: Component<{
+  user: string;
+  onMessageReceived: (message: Message) => void;
+}> = (props) => {
   const [anchorEl, setAnchorEl] = createSignal<null | HTMLElement>(null);
   const open = () => Boolean(anchorEl());
   const handleClose = () => setAnchorEl(null);
@@ -35,6 +40,39 @@ const MessageBox: Component<{ user: string }> = (props) => {
   // files show modal
   const [modal, setModal] = createSignal<boolean>(false);
   const [loading, setLoading] = createSignal<boolean>(false);
+
+  // ----------------------SOCKET------------------
+
+  // Function to handle incoming messages
+  const handleIncomingMessage = (message: Message) => {
+    console.log("message", message);
+    props.onMessageReceived(message);
+  };
+
+  // Setup Socket.IO listeners
+  onMount(() => {
+    socket.on("receiveMessage", handleIncomingMessage);
+
+    socket.on("messageSent", (confirmation) => {
+      console.log("Message sent:", confirmation);
+      handleIncomingMessage(confirmation);
+      // Optionally, update UI if necessary
+      // For example, mark message as sent
+    });
+
+    socket.on("error", (error) => {
+      console.error("Socket error:", error.message);
+      toast.error(error.message);
+    });
+  });
+
+  onCleanup(() => {
+    socket.off("receiveMessage", handleIncomingMessage);
+    socket.off("messageSent");
+    socket.off("error");
+  });
+
+  // -----------------------------------------------
 
   const sendMessage = async () => {
     if (!props.user) {

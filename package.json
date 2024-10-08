@@ -24,6 +24,7 @@
     "@tanstack/solid-query-devtools": "^5.53.2",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
+    "socket.io-client": "^4.8.0",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.8.11",
     "solid-toast": "^0.5.0",

@@ -78,6 +78,14 @@ const About: Component<{}> = (props) => {
     }
   });
 
+  const handleIncomingMessage = (message: Message) => {
+    setMessagesList((prev) => [...prev, message]);
+  };
+
+  const filterDeletedMessage = (id: string) => {
+    setMessagesList((prev) => prev?.filter((m) => m._id !== id));
+  };
+
   return (
     <>
       <Container maxWidth="md" sx={{ marginTop: "5em" }}>
@@ -116,6 +124,7 @@ const About: Component<{}> = (props) => {
                       currentUser={userDetail?.user_name ?? ""}
                       setPage={() => setPage(page() + 1)}
                       pagination={messages()?.[1]?.pagination}
+                      filterDeletedMessage={filterDeletedMessage}
                     />
                   ) : (
                     <Box
@@ -147,7 +156,10 @@ const About: Component<{}> = (props) => {
                       </Box>
                     </Box>
                   )}
-                  <MessageBox user={user()} />
+                  <MessageBox
+                    user={user()}
+                    onMessageReceived={handleIncomingMessage}
+                  />
                 </Box>
               </Show>
             </Card>

@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  CircularProgress,
   Dialog,
   DialogContent,
   IconButton,
@@ -19,25 +20,30 @@ interface Props {
   currentUser: string;
   setPage: () => void;
   pagination: MessagePagination | undefined;
+  filterDeletedMessage: (id: string) => void;
 }
 
 const MessageQueries: Component<Props> = (props) => {
   createEffect(() => console.log("props", props.messages));
 
   const [modal, setModal] = createSignal<MessageFiles>({} as MessageFiles);
+  const [loading, setLoading] = createSignal<boolean>(false);
 
   const deleteMessage = async (id: string) => {
+    setLoading(true);
     try {
       const response = await apiClient.delete(`/message/${id}`);
       if (response.status === 200) {
         console.log("Message deleted successfully");
         // Refetch messages after deletion
-        // setMessages((prev) => prev.filter((m) => m._id!== id));
+        props.filterDeletedMessage(id);
       } else {
         console.error("Failed to delete message");
       }
     } catch (error) {
       console.error("Error deleting message:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -131,13 +137,22 @@ const MessageQueries: Component<Props> = (props) => {
                     <Typography variant="body1" fontWeight="bold">
                       {message.sender.first_name}
                     </Typography>
-                    {message.sender.user_name === props.currentUser && (
-                      <IconButton onClick={() => deleteMessage(message._id)}>
-                        <DeleteForeverRoundedIcon
-                          color="error"
-                          sx={{ fontSize: "1rem", cursor: "pointer" }}
-                        />
-                      </IconButton>
+                    {loading() ? (
+                      <CircularProgress color="warning" size={15} />
+                    ) : (
+                      <>
+                        {message.sender.user_name === props.currentUser && (
+                          <IconButton
+                            disabled={loading()}
+                            onClick={() => deleteMessage(message._id)}
+                          >
+                            <DeleteForeverRoundedIcon
+                              color="error"
+                              sx={{ fontSize: "1rem", cursor: "pointer" }}
+                            />
+                          </IconButton>
+                        )}
+                      </>
                     )}
                   </Box>
 
