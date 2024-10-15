@@ -44,11 +44,15 @@ const MessageBox: Component<{
 
   // ----------------------SOCKET------------------
 
+  console.log("props.currentUser", props.user);
+
   // Function to handle incoming messages
   const handleIncomingMessage = (message: Message) => {
-    console.log("message", message);
-    props.onMessageReceived(message);
-    props.refectRead();
+    console.log("inmessage", message);
+    if (props.user == message.sender?.user_name) {
+      props.onMessageReceived(message);
+      props.refectRead();
+    }
   };
 
   // Setup Socket.IO listeners
@@ -101,7 +105,8 @@ const MessageBox: Component<{
       if (res.status === 201) {
         setContent("");
         setFiles([]); // Clear files after sending
-        handleIncomingMessage(res.data?.data);
+        // handleIncomingMessage(res.data?.data);
+        props.onMessageReceived(res.data?.data);
       }
     } catch (error) {
       console.error("An error occurred:", error);
