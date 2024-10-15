@@ -84,14 +84,14 @@ const FriendsCard: Component<Props> = (props) => {
             >
               View
             </Button>
-            <Button
-              //   onClick={() => handleClickDeclined(props.user_name)}
+            {/* <Button
+              onClick={() => navigate(`/user/about?user=diax`)}
               startIcon={<AiOutlineMessage />}
               sx={{ marginRight: "5px" }}
               color="secondary"
             >
               Message
-            </Button>
+            </Button> */}
           </Grid>
         </Grid>
       </Paper>

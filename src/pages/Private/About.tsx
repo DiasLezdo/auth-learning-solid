@@ -25,11 +25,15 @@ import useAuthAppStore from "../../store/store";
 import { Message } from "../../types/posts";
 import DeleteOutlineRoundedIcon from "@suid/icons-material/DeleteOutlineRounded";
 import socket from "../../services/socket";
+import { useSearchParams } from "@solidjs/router";
 
 const About: Component<{}> = (props) => {
   const userDetail = useAuthAppStore((s) => s.user); //optimize code
 
-  const [user, setUser] = createSignal<string>("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+
+  const [user, setUser] = createSignal<string>(searchParams.user || "");
   const [messagesList, setMessagesList] = createSignal<Message[]>([]);
   const [page, setPage] = createSignal<number>(1);
 
@@ -88,6 +92,14 @@ const About: Component<{}> = (props) => {
   //     return message;
   //   })
   // );
+
+  createEffect(
+    on(user, (data) => {
+      if (data) {
+        setSearchParams({ user: data || "" });
+      }
+    })
+  );
 
   createEffect(() => console.log("readChatData", readChatData()));
 

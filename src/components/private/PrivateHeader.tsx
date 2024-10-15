@@ -48,7 +48,7 @@ const PrivateHeader: Component<{}> = (props) => {
             Home
           </A>
           <A
-            href="/user/about"
+            href="/user/about?user="
             style={{
               color: theme.palette.secondary.dark,
               "text-decoration": "none",
