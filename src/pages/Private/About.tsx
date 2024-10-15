@@ -12,6 +12,9 @@ import {
   createResource,
   createSignal,
   For,
+  on,
+  onCleanup,
+  onMount,
   Show,
 } from "solid-js";
 import MessageBox from "../../components/messages/MessageBox";
@@ -21,6 +24,7 @@ import apiClient from "../../services/backend";
 import useAuthAppStore from "../../store/store";
 import { Message } from "../../types/posts";
 import DeleteOutlineRoundedIcon from "@suid/icons-material/DeleteOutlineRounded";
+import socket from "../../services/socket";
 
 const About: Component<{}> = (props) => {
   const userDetail = useAuthAppStore((s) => s.user); //optimize code
@@ -43,26 +47,128 @@ const About: Component<{}> = (props) => {
     return response.data;
   };
 
-  // const [messages, { refetch }] = createResource(
-  //   () => page() && user(),
-  //   () => {
-  //     if (user()) {
-  //       return Promise.all([readChat(), fetchMessages(page())]);
-  //     }
-  //   }
-  // );
-
-  const [messages, { refetch }] = createResource(
+  const [readChatData, { refetch: refectRead }] = createResource(
     () => [user(), page()], // Ensure both are dependencies
     async ([user, page]) => {
       if (user) {
-        return Promise.all([readChat(), fetchMessages(page)]);
+        return readChat();
       }
     }
   );
 
-  createEffect(() => console.log("message()", messages()?.[1]?.data));
-  // createEffect(() => refetch([null, fetchMessages(page())]));
+  const [messages, { mutate, refetch }] = createResource(
+    () => [user(), page()], // Ensure both are dependencies
+    async ([user, page]) => {
+      if (user) {
+        // return Promise.all([readChat(), fetchMessages(page)]);
+        return fetchMessages(page);
+      }
+    }
+  );
+
+  //
+  // const updateMap = readChatData()?.data?.reduce((map: any, msg: any) => {
+  //   map[msg._id] = msg;
+  //   return map;
+  // }, {});
+
+  // // Update the allMessages array
+  // setMessagesList(
+  //   messagesList()?.map((message: Message) => {
+  //     const updated = updateMap[message._id];
+
+  //     if (updated) {
+  //       return {
+  //         ...message,
+  //         read: updated.read,
+  //         updatedAt: updated.updatedAt,
+  //       };
+  //     }
+
+  //     return message;
+  //   })
+  // );
+
+  createEffect(() => console.log("readChatData", readChatData()));
+
+  // createEffect(() => {
+  //   if (readChatData()?.data.length > 0) {
+  //     // Create a lookup map for efficient updates
+  //     const updateMap = readChatData()?.data?.reduce((map: any, msg: any) => {
+  //       map[msg._id] = msg;
+  //       return map;
+  //     }, {});
+  //     // Update the allMessages array
+  //     setMessagesList(
+  //       messagesList()?.map((message: Message) => {
+  //         const updated = updateMap[message._id];
+  //         if (updated) {
+  //           return {
+  //             ...message,
+  //             read: updated.read,
+  //             // updatedAt: updated.updatedAt,
+  //           };
+  //         }
+  //         return message;
+  //       })
+  //     );
+  //   }
+  // });
+
+  createEffect(
+    on(readChatData, (data) => {
+      if (data?.data.length > 0) {
+        // Create a lookup map for efficient updates
+        const updateMap = data.data.reduce((map: any, msg: any) => {
+          map[msg._id] = msg;
+          return map;
+        }, {});
+        // Update the allMessages array
+        setMessagesList((prev) =>
+          prev.map((message: Message) => {
+            const updated = updateMap[message._id];
+            if (updated) {
+              return {
+                ...message,
+                read: updated.read,
+              };
+            }
+            return message;
+          })
+        );
+      }
+    })
+  );
+
+  onMount(() => {
+    const handler = (data: any) => {
+      console.log("seen", data);
+      const updateMap = data.data.reduce((map: any, msg: any) => {
+        map[msg._id] = msg;
+        return map;
+      }, {});
+      setMessagesList((prev) =>
+        prev.map((message: Message) => {
+          const updated = updateMap[message._id];
+          if (updated) {
+            return {
+              ...message,
+              read: updated.read,
+            };
+          }
+          return message;
+        })
+      );
+    };
+
+    // refectRead();
+
+    socket.on("messagesSeen", handler);
+
+    onCleanup(() => {
+      socket.off("messagesSeen", handler);
+    });
+  });
 
   createEffect(() => {
     if (user()) {
@@ -73,8 +179,8 @@ const About: Component<{}> = (props) => {
   });
 
   createEffect(() => {
-    if (messages()?.[1]?.data) {
-      setMessagesList((prev) => [...messages()?.[1]?.data?.reverse(), ...prev]);
+    if (messages()?.data) {
+      setMessagesList((prev) => [...messages()?.data?.reverse(), ...prev]);
     }
   });
 
@@ -123,7 +229,7 @@ const About: Component<{}> = (props) => {
                       messages={messagesList()}
                       currentUser={userDetail?.user_name ?? ""}
                       setPage={() => setPage(page() + 1)}
-                      pagination={messages()?.[1]?.pagination}
+                      pagination={messages()?.pagination}
                       filterDeletedMessage={filterDeletedMessage}
                     />
                   ) : (
@@ -159,6 +265,7 @@ const About: Component<{}> = (props) => {
                   <MessageBox
                     user={user()}
                     onMessageReceived={handleIncomingMessage}
+                    refectRead={refectRead}
                   />
                 </Box>
               </Show>

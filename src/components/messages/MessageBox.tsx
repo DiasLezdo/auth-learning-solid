@@ -28,6 +28,7 @@ import socket from "../../services/socket";
 const MessageBox: Component<{
   user: string;
   onMessageReceived: (message: Message) => void;
+  refectRead: () => void;
 }> = (props) => {
   const [anchorEl, setAnchorEl] = createSignal<null | HTMLElement>(null);
   const open = () => Boolean(anchorEl());
@@ -47,6 +48,7 @@ const MessageBox: Component<{
   const handleIncomingMessage = (message: Message) => {
     console.log("message", message);
     props.onMessageReceived(message);
+    props.refectRead();
   };
 
   // Setup Socket.IO listeners
