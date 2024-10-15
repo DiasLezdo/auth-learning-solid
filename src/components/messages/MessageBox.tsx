@@ -57,7 +57,7 @@ const MessageBox: Component<{
 
     socket.on("messageSent", (confirmation) => {
       console.log("Message sent:", confirmation);
-      handleIncomingMessage(confirmation);
+      // handleIncomingMessage(confirmation);
       // Optionally, update UI if necessary
       // For example, mark message as sent
     });
@@ -101,6 +101,7 @@ const MessageBox: Component<{
       if (res.status === 201) {
         setContent("");
         setFiles([]); // Clear files after sending
+        handleIncomingMessage(res.data?.data);
       }
     } catch (error) {
       console.error("An error occurred:", error);
