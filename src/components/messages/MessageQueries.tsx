@@ -212,16 +212,20 @@ const MessageQueries: Component<Props> = (props) => {
                       {new Date(message.createdAt).toLocaleString()}{" "}
                       {/* Format timestamp */}
                     </Typography>
-                    {message.read ? (
-                      <DoneAllRoundedIcon
-                        color="secondary"
-                        sx={{ fontSize: "1rem" }}
-                      />
-                    ) : (
-                      <DoneRoundedIcon
-                        color="secondary"
-                        sx={{ fontSize: "1rem" }}
-                      />
+                    {message.sender.user_name === props.currentUser && (
+                      <>
+                        {message.read ? (
+                          <DoneAllRoundedIcon
+                            color="secondary"
+                            sx={{ fontSize: "1rem" }}
+                          />
+                        ) : (
+                          <DoneRoundedIcon
+                            color="secondary"
+                            sx={{ fontSize: "1rem" }}
+                          />
+                        )}
+                      </>
                     )}
                   </Box>
                 </Box>
