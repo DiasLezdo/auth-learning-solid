@@ -192,6 +192,21 @@ const About: Component<{}> = (props) => {
     setMessagesList((prev) => prev?.filter((m) => m._id !== id));
   };
 
+  onMount(() => {
+    const handler = (data: any) => {
+      console.log("Delete", data);
+      filterDeletedMessage(data.data?._id);
+    };
+
+    // refectRead();
+
+    socket.on("messagesDeleted", handler);
+
+    onCleanup(() => {
+      socket.off("messagesDeleted", handler);
+    });
+  });
+
   return (
     <>
       <Container maxWidth="md" sx={{ marginTop: "5em" }}>
